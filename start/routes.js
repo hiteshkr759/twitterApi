@@ -21,6 +21,6 @@ Route.get('/', () => {
 })
 
 Route.group(() => {
-  Route.get('users', 'UserController.index')   // GET /api/v1/users
+  Route.post('users', 'UserController.store')   // GET /api/v1/users
   //Route.post('users', closure)  // POST /api/v1/users
 }).prefix('api/v1')
