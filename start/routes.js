@@ -19,3 +19,8 @@ const Route = use('Route')
 Route.get('/', () => {
   return { greeting: 'Hello world in JSON' }
 })
+
+Route.group(() => {
+  Route.get('users', 'UserController.index')   // GET /api/v1/users
+  //Route.post('users', closure)  // POST /api/v1/users
+}).prefix('api/v1')
