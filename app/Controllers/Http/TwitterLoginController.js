@@ -1,5 +1,6 @@
 'use strict'
 const TwitterApi = use('Adonis/Services/Twitter');
+const Config = use('Config')
 class TwitterLoginController {
 
     async login({session,request,response}){
@@ -27,6 +28,7 @@ class TwitterLoginController {
                 console.log(accessToken,accessTokenSecret,results);
             }
         });
+        console.log('Config',Config.get('twitter'));
         return response.status(200).json({
             api : 'It working finre',
             oauth_verifier,
