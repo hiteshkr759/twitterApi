@@ -9,7 +9,7 @@ class TwitterService {
         let instance  = new twitterAPI({
             consumerKey: 'Qgui7W8krz7ccCrpLeolyObz9',
             consumerSecret: 'UGVbI3PZm55rTJKAyTd5ubtGj38S7TmHKqUNytN3eNOiFKeXkC',
-            callback: 'http://127.0.0.1:8080/pages/callback'
+            callback: 'http://127.0.0.1:3333/api/v1/twitter/callback'
         });
         return instance;
     }
