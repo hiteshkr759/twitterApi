@@ -1,6 +1,7 @@
 'use strict'
 const TwitterApi = use('Adonis/Services/Twitter');
-const Config = use('Config')
+const Config = use('Config');
+const TwitterUser = use('App/Models/TwitterUser');
 class TwitterLoginController {
 
     async login({session,request,response}){
@@ -18,21 +19,27 @@ class TwitterLoginController {
     }
 
     async callback({session,request,response}){
+        console.log('I am calling to check');
         const {oauth_verifier} = request.only(['oauth_verifier']);
         const oauthToken = session.get('oauthToken');
         const oauthSecret = session.get('oauthSecret');
-        const apiResponse = TwitterApi.getAccessToken(oauthToken,oauthSecret,oauth_verifier,(error, accessToken, accessTokenSecret, results)=> {
-            if (error) {
-                console.log(error);
-            } else {
-                console.log(accessToken,accessTokenSecret,results);
+        const apiResponse = await TwitterApi.getAccessToken(oauthToken,oauthSecret,oauth_verifier);
+        if(apiResponse.results){
+            const twitterCheckUser = {
+                twitter_id :apiResponse.results.user_id
             }
-        });
-        console.log('Config',Config.get('twitter'));
-        return response.status(200).json({
-            api : 'It working finre',
-            oauth_verifier,
-        })
+            const twitterUser = {
+                twitter_id :apiResponse.results.user_id,
+                twitter_screenName:apiResponse.results.screen_name,
+                twitter_accessToken:apiResponse.oauthAccessToken,
+                twitter_accessSecret:apiResponse.oauthAccessTokenSecret,
+                user_id : 1
+            }
+            const user = await TwitterUser.findOrCreate(twitterCheckUser,twitterUser);
+            return response.status(200).json(user);
+        }else{
+            return response.status(500).json(apiResponse);
+        }
     }
 }
 
