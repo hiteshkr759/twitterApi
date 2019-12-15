@@ -1,4 +1,5 @@
 'use strict'
+const path = require('path')
 
 /*
 |--------------------------------------------------------------------------
@@ -10,6 +11,7 @@
 | provider here.
 |
 */
+console.log('Provider Loading');
 const providers = [
   '@adonisjs/framework/providers/AppProvider',
   '@adonisjs/auth/providers/AuthProvider',
@@ -17,6 +19,7 @@ const providers = [
   '@adonisjs/cors/providers/CorsProvider',
   '@adonisjs/lucid/providers/LucidProvider',
   'adonis-scheduler/providers/SchedulerProvider',
+   path.join(__dirname,'../app', 'Provider', 'TwitterServiceProvider')
 ]
 
 /*
