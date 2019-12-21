@@ -17,10 +17,6 @@ class Tweet extends Model {
         return moment().seconds(0).milliseconds(0).utc().add(5,"days").format("YYYY-MM-DD HH:mm:ss");
     }
 
-
-
-
-
     static async postTweetsToTwitter(){
         var slotStartTime = Tweet.slotStartTime();
         var slotEndTime = Tweet.slotEndTime();
@@ -38,11 +34,10 @@ class Tweet extends Model {
                 //     status
                 // },twitter_accessToken,twitter_accessSecret);
                 // postedTweets.push(postedTweet);
-                let postedTweet = await TwitterApi.statuses("update", {
-                        status
-                    },twitter_accessToken,twitter_accessSecret);
-                    console.log(postedTweet)
-
+                // await TwitterApi.statuses("update", {
+                //         status
+                //     },twitter_accessToken,twitter_accessSecret);
+                    //console.log(postedTweet)
             });
             console.log('Posted Tweets',postedTweets);
         }

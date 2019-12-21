@@ -26,5 +26,5 @@ Route.group(() => {
   Route.get('twitter/callback','TwitterLoginController.callback')
   Route.get('twitter/login','TwitterLoginController.login')
   Route.post('schedule/tweet','ScheduleTweetController.store')
-  Route.get('schedule/tweet/post','ScheduleTweetController.post')
+  //Route.get('schedule/tweet/post','ScheduleTweetController.post')
 }).prefix('api/v1')
