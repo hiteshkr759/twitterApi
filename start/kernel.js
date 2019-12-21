@@ -58,3 +58,15 @@ Server
   .registerGlobal(globalMiddleware)
   .registerNamed(namedMiddleware)
   .use(serverMiddleware)
+
+
+/*
+|--------------------------------------------------------------------------
+| Run Scheduler
+|--------------------------------------------------------------------------
+|
+| Run the scheduler on boot of the web sever.
+|
+*/
+const Scheduler = use('Adonis/Addons/Scheduler')
+//Scheduler.run()

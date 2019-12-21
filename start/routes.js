@@ -19,3 +19,10 @@ const Route = use('Route')
 Route.get('/', () => {
   return { greeting: 'Hello world in JSON' }
 })
+
+Route.group(() => {
+  Route.post('users', 'UserController.store')   // GET /api/v1/users
+  //Route.post('users', closure)  // POST /api/v1/users
+  Route.post('schedule/tweet','ScheduleTweetController.store')
+  Route.get('schedule/tweet/post','ScheduleTweetController.post')
+}).prefix('api/v1')
