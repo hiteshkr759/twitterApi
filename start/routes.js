@@ -23,6 +23,8 @@ Route.get('/', () => {
 Route.group(() => {
   Route.post('users', 'UserController.store')   // GET /api/v1/users
   //Route.post('users', closure)  // POST /api/v1/users
+  Route.get('twitter/callback','TwitterLoginController.callback')
+  Route.get('twitter/login','TwitterLoginController.login')
   Route.post('schedule/tweet','ScheduleTweetController.store')
   Route.get('schedule/tweet/post','ScheduleTweetController.post')
 }).prefix('api/v1')

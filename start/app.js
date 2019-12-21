@@ -19,6 +19,7 @@ const providers = [
   '@adonisjs/cors/providers/CorsProvider',
   '@adonisjs/lucid/providers/LucidProvider',
   'adonis-scheduler/providers/SchedulerProvider',
+  '@adonisjs/session/providers/SessionProvider',
    path.join(__dirname,'../app', 'Provider', 'TwitterServiceProvider')
 ]
 
