@@ -2,23 +2,55 @@
 
 const Tweet = use('App/Models/Tweet');
 const Request = use('Request'); 
-const TwitterApi = use('Adonis/Services/Twitter');
+
 
 class ScheduleTweetController {
 
 
+
     async store({request,response}){
-       // console.log('I am working');
+       console.log('I am working');
 
         const data  = request.only(['postdatetime','twitterUserId','message']);
-        const tweet = await Tweet.create(data);
-        return tweet;
+        if(data.message && data.postdatetime){
+            console.log('Post time ',data.postdatetime);
+            const tweet = await Tweet.create(data);
+            return tweet;
+        }else{
+            return {
+                error : 'Bad Data Formate'
+            }
+        }
+        
     }
 
 
     async post({request,response}){
         console.log('I am running');
-        let message = 'I an running' ;
+        //const tweets = await Database.table('tweets').select('*');
+        // var slotStartTime = Tweet.slotStartTime();
+        // var slotEndTime = Tweet.slotEndTime();
+        // const tweets = await Database.select('*')
+        //     .from('tweets')
+        //     .where('postdatetime', '>=', slotStartTime)
+        //     .andWhere('postdatetime','<=',slotEndTime)
+        //     .leftJoin('twitter_users', 'tweets.twitterUserId', 'twitter_users.twitter_id')
+        //     .orderBy('postdatetime','asc');
+        // if(tweets.length > 0){
+            
+        // }
+        // return tweets;
+        const tweets = await Tweet.postTweetsToTwitter();
+        return {tweets};
+        //date.setSeconds(0,0);
+        //endDate.setSeconds(0,0);
+       // endDate.add(2,'minutes');
+       //super.endDate.concat(['dob']);
+      // var endDateMoment = super.dates.concat(['birthday']);
+      
+        //return {slotStartTime,slotEndTime,tweets};
+        // SELECT * FROM tweets LEFT JOIN twitter_users ON tweets.twitterUserId = twitter_users.twitter_id
+        //let message = 'I an running' ;
         
         // const callback = async (error, requestToken, requestTokenSecret, results) =>{
         //     return response.status(200).json({error, requestToken, requestTokenSecret, results});
@@ -37,8 +69,8 @@ class ScheduleTweetController {
         // if(todos.length > 0){
         //     return response.status(200).json({todos});
         // }
-        let apiResponse = await TwitterApi.getRequestToken();
-        response.status(200).json(apiResponse);
+        //let apiResponse = await TwitterApi.getRequestToken();
+        //response.status(200).json(apiResponse);
 
     }
 }
