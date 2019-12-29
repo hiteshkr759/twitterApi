@@ -28,7 +28,8 @@
     "adonis-scheduler": "git+https://github.com/danilopolani/adonis-scheduler.git",
     "moment": "^2.24.0",
     "mysql": "^2.17.1",
-    "node-twitter-api": "^1.8.0"
+    "node-twitter-api": "^1.8.0",
+    "request-promise": "^4.2.5"
   },
   "devDependencies": {},
   "autoload": {
