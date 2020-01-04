@@ -15,10 +15,9 @@
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
+const Helpers = use('Helpers')
 
-Route.get('/', () => {
-  return { greeting: 'Hello world in JSON' }
-})
+
 
 Route.group(() => {
   Route.post('users', 'UserController.store')   // GET /api/v1/users
@@ -28,3 +27,19 @@ Route.group(() => {
   Route.post('schedule/tweet','ScheduleTweetController.store')
   Route.get('schedule/tweet/post','ScheduleTweetController.post')
 }).prefix('api/v1')
+
+// Route.any('*', ({view}) => {
+//   //response.wr
+//  // response.type('application/html');
+//   console.log('-->',Helpers.publicPath('index.html'));
+//   return view.render('homepage');
+//   //response.sendFile(Helpers.publicPath('dist/twitter/index.html'));
+//    //response.download(Helpers.publicPath('index.html'));
+//    //return { greeting: 'Hello world in JSON' }
+// })
+
+Route.get('*',  ({ view,response }) => {
+  response.download(Helpers.publicPath('index.html'))
+  //view.view
+  //return view.render(Helpers.publicPath('index.html'))
+})

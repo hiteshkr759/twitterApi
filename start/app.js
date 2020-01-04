@@ -13,6 +13,7 @@ const path = require('path')
 */
 console.log('Provider Loading');
 const providers = [
+  '@adonisjs/framework/providers/ViewProvider',
   '@adonisjs/framework/providers/AppProvider',
   '@adonisjs/auth/providers/AuthProvider',
   '@adonisjs/bodyparser/providers/BodyParserProvider',

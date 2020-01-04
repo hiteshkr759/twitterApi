@@ -16,12 +16,8 @@ class UserController {
                         error : 'User already exist '
                     }
                 })
-            }
-
-            
-
+            }            
             const user = await User.create(data);
-
             //console.log('Testing',data,userExist,user);
             //return user;
              return response
