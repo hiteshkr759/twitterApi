@@ -42,7 +42,7 @@ class TwitterLoginController {
         const ss_oauthSecret = session.get('oauthSecret');
         try{
             const apiResponse = await TwitterApi.getAccessToken(oauth_token,oauthSecret,oauth_verifier);
-            console.log(apiResponse);
+            //  console.log(apiResponse);
             if(apiResponse.results){
                 const {oauthAccessToken,oauthAccessTokenSecret,results} = apiResponse;
                 try{
@@ -92,17 +92,25 @@ class TwitterLoginController {
     }
 
 
-    /*  */
+    /* Dashboard login User */
     async verifyCredentials({auth,request,response}){
         try{
             console.log('Load Profile');
-            const {twitter_accessToken,twitter_accessSecret} = request.twitterUser;
+            const {twitter_accessToken,twitter_accessSecret,wiseListUserIds,whiteListUserIds} = request.twitterUser;
             const params = request.get();
-            const userProfile = await TwitterApi.verifyCredentials(twitter_accessToken,twitter_accessSecret,params);
-            if(userProfile && userProfile.parsedData){
-                return response.status(200).json(userProfile.parsedData);
+            const userProfileResponse = await TwitterApi.verifyCredentials(twitter_accessToken,twitter_accessSecret,params);
+            if(userProfileResponse && userProfileResponse.parsedData){
+                const userDetail = userProfileResponse.parsedData;
+                const additionDataFromDB = {
+                    additionData  : {
+                        wiseListUserIds,
+                        whiteListUserIds
+                    }
+                }
+                Object.assign(userDetail,additionDataFromDB);
+                return response.status(200).json(userDetail);
             }else{
-                return response.status(400).json(userProfile);
+                return response.status(400).json(userProfileResponse);
             }
         }catch(error){
             return response.status(500).json({
@@ -110,6 +118,34 @@ class TwitterLoginController {
             })
         }
     }
+
+    async users({auth,request,response,params}){
+        try{
+            const requestedParams = request.post();
+            const type = params.type;
+            const {twitter_accessToken,twitter_accessSecret} = request.twitterUser;
+            const users = [{
+                userId : 'abc',
+                params
+            }]
+            const allLookupUsersResponse = await TwitterApi.users(type,requestedParams,twitter_accessToken,twitter_accessSecret);
+            //console.log(allLookupUsersResponse);
+            if(allLookupUsersResponse && allLookupUsersResponse.parsedData){
+                const lookupUsers = allLookupUsersResponse.parsedData;
+                return response.status(200).json(lookupUsers);
+            }else{
+                return response.status(400).json(allLookupUsersResponse);
+            }
+        }catch(error){
+            return response.status(500).json({
+                error
+            })
+        }
+    }
+
+
+
+
 
 
     async clear({request,auth,response}){

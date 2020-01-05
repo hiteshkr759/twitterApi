@@ -11,6 +11,8 @@ class TwitterUsersSchema extends Schema {
       table.string('twitter_screenName', 50).notNullable();
       table.string('twitter_accessToken', 255).notNullable();
       table.string('twitter_accessSecret', 255).notNullable();
+      table.string('wiseListUserIds',500);
+      table.string('whiteListUserIds',500);
       table.string('user_id', 255);
       // table.integer('user_id').unsigned();
       // table.foreign('user_id').references('id').inTable('users');

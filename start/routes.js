@@ -29,6 +29,8 @@ Route.group(() => {
   Route.get('twitter/callback','TwitterLoginController.callback')
   Route.get('twitter/login','TwitterLoginController.login')
   Route.get('twitter/verifyCredentials','TwitterLoginController.verifyCredentials').middleware(['isOwner'])
+  Route.post('twitter/users/:type','TwitterLoginController.users').middleware(['isOwner'])
+
 
   Route.post('schedule/tweet','ScheduleTweetController.store')
   Route.get('schedule/tweet/post','ScheduleTweetController.post')

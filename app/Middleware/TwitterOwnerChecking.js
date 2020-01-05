@@ -28,6 +28,11 @@ class TwitterOwnerChecking {
           message : 'You need to authorise this account'
         })
       }else{
+        const additionData = {
+          wiseListUserIds : '752038095504052224,752038095504052225',
+          whiteListUserIds : '752038095504052226,752038095504052227'
+        }
+        Object.assign(twitterUser,additionData);
         request.twitterUser = twitterUser;
       }
     }else{
