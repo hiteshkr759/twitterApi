@@ -20,10 +20,16 @@ const Helpers = use('Helpers')
 
 
 Route.group(() => {
-  Route.post('users', 'UserController.store')   // GET /api/v1/users
+  Route.post('users/register', 'UserController.store')
+  Route.post('users/login', 'UserController.login')
+  Route.get('users/clear', 'UserController.clear')
+  // GET /api/v1/users
   //Route.post('users', closure)  // POST /api/v1/users
+  Route.get('twitter/clear', 'TwitterLoginController.clear')
   Route.get('twitter/callback','TwitterLoginController.callback')
   Route.get('twitter/login','TwitterLoginController.login')
+  Route.get('twitter/verifyCredentials','TwitterLoginController.verifyCredentials').middleware(['isOwner'])
+
   Route.post('schedule/tweet','ScheduleTweetController.store')
   Route.get('schedule/tweet/post','ScheduleTweetController.post')
 }).prefix('api/v1')
