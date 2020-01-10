@@ -28,6 +28,7 @@ Route.group(() => {
   Route.get('twitter/clear', 'TwitterLoginController.clear')
   Route.get('twitter/callback','TwitterLoginController.callback')
   Route.get('twitter/login','TwitterLoginController.login')
+  Route.get('twitter/potentialFollower','TwitterFriendController.potentialFollower').middleware(['isOwner'])
   Route.get('twitter/verifyCredentials','TwitterLoginController.verifyCredentials').middleware(['isOwner'])
   Route.post('twitter/users/:type','TwitterLoginController.users').middleware(['isOwner'])
 
@@ -47,7 +48,10 @@ Route.group(() => {
 // })
 
 Route.get('*',  ({ view,response }) => {
-  response.download(Helpers.publicPath('index.html'))
+  response.status(200).json({
+    message : 'API Is Running' 
+  });
+  //response.download(Helpers.publicPath('index.html'))
   //view.view
   //return view.render(Helpers.publicPath('index.html'))
 })
