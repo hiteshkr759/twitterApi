@@ -110,7 +110,7 @@ class TwitterLoginController {
                 Object.assign(userDetail,additionDataFromDB);
                 return response.status(200).json(userDetail);
             }else{
-                return response.status(400).json(userProfileResponse);
+                return response.status(400).json(userProfileResponse.error);
             }
         }catch(error){
             return response.status(500).json({
