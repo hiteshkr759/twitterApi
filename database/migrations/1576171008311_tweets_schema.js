@@ -14,7 +14,6 @@ class TweetsSchema extends Schema {
       table.timestamps()
     })
   }
-
   down () {
     this.drop('tweets')
   }

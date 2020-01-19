@@ -2,12 +2,13 @@
 const TwitterApi = use('Adonis/Services/Twitter');
 const Config = use('Config');
 const TwitterUser = use('App/Models/TwitterUser');
+const User = use('App/Models/User');
+
 class TwitterLoginController {
 
     async login({session,request,response}){
         try{
             let apiResponse = await TwitterApi.getRequestToken();
-            console.log('Login APi',apiResponse);
             if(apiResponse.results){
                 const oauthToken = apiResponse.oauthToken;
                 const oauthSecret = apiResponse.oauthTokenSecret;
@@ -16,75 +17,66 @@ class TwitterLoginController {
                 const logingUrl = TwitterApi.getAuthUrl(apiResponse.oauthToken, {
                     include_email : true
                 });
-                console.log('loginUrl',logingUrl);
                 response.json({
                     logingUrl,
                     oauthSecret
                 })
-               // response.status(301).redirect(logingUrl);
             }else{
                 respone.json({
                     error : 'API is not working'
                 }); 
             }
         }catch(e){
-            response.json(({
+            response.json({
                 error : '3rd Party API is not Working'
-            }))
+            });
         }
     }
 
     async callback({session,request,auth,response}){
-        console.log('Twitter Callback is executing');
         const {oauth_token,oauth_verifier,oauthSecret} = request.only(['oauth_token','oauth_verifier','oauthSecret']);
-        console.log({oauth_token,oauth_verifier,oauthSecret});
-        const ss_oauthToken = session.get('oauthToken');
-        const ss_oauthSecret = session.get('oauthSecret');
         try{
             const apiResponse = await TwitterApi.getAccessToken(oauth_token,oauthSecret,oauth_verifier);
-            //  console.log(apiResponse);
-            if(apiResponse.results){
+            //check for Api Error
+            if(apiResponse.oauthAccessToken && apiResponse.oauthAccessTokenSecret){
                 const {oauthAccessToken,oauthAccessTokenSecret,results} = apiResponse;
+                const { user_id : logedIn_twitter_userId,screen_name } = results;
+                // Create User or Authenticate User
+                const api_user_email  = logedIn_twitter_userId + '@twitter.api.user';
+                const api_user_password  = logedIn_twitter_userId + 'secretWord';
+                let logedInUser;
+                if(await User.findBy('email',api_user_email)){
+                    logedInUser = await User.findBy('email', api_user_email);
+                }else{
+                    const newApiUser = {
+                        username : logedIn_twitter_userId,
+                        email : api_user_email,
+                        password : api_user_password,
+                        linkedTwitterAccounts : logedIn_twitter_userId
+                    }
+                    logedInUser = await User.create(newApiUser);
+                }
+                const twitterCheckUser = {
+                    twitter_id : logedIn_twitter_userId
+                }
+                const twitterUser = {
+                    twitter_id :logedIn_twitter_userId,
+                    twitter_screenName:screen_name,
+                    twitter_accessToken:oauthAccessToken,
+                    twitter_accessSecret:oauthAccessTokenSecret,
+                    user_id : logedInUser.id
+                }
                 try{
-                    const params = {
-                        user_id : results.user_id,
-                        include_email : true
-                    }
-                    const verifiedUser = await TwitterApi.verifyCredentials(oauthAccessToken,oauthAccessTokenSecret,params);
-                    if(verifiedUser && verifiedUser.parsedData){
-                        return response.status(200).json(verifiedUser.parsedData);
-                    }else{
-                        return response.status(400).json(verifiedUser);
-                    }
-                }catch(error){
-                    return response.status(500).json({
-                        error
-                    })
-                }               
-                
-
-                // console.log('Api Ressponse',apiResponse);
-                // const twitterCheckUser = {
-                //     twitter_id :apiResponse.results.user_id
-                // }
-                // const twitterUser = {
-                //     twitter_id :apiResponse.results.user_id,
-                //     twitter_screenName:apiResponse.results.screen_name,
-                //     twitter_accessToken:apiResponse.oauthAccessToken,
-                //     twitter_accessSecret:apiResponse.oauthAccessTokenSecret,
-                //     user_id : 1
-                // }
-                // const user = await TwitterUser.findOrCreate(twitterCheckUser,twitterUser);
-                // const token = await auth.generate(user,true);
-                // Object.assign(user, token)
-                // return response.status(200).json(user);
-
-
-            //return response.status(200).json(apiResponse);
+                    const twitterApiuser = await TwitterUser.findOrCreate(twitterCheckUser,twitterUser);
+                    let token = await auth.generate(logedInUser)
+                    Object.assign(logedInUser, token);
+                    return response.status(200).json(logedInUser);
+                }catch(e){
+                    return response.status(500).json({error : 'Error in Twitter Account Creation'});
+                }
             }else{
-            // console.log('Error');
-                console.log(apiResponse);
-                return response.status(500).json(apiResponse);
+                const error = apiResponse.error;
+                return response.status(500).json({error});
             }
         }catch(error){
             return response.status(500).json({error})
@@ -142,11 +134,6 @@ class TwitterLoginController {
             })
         }
     }
-
-
-
-
-
 
     async clear({request,auth,response}){
         const users = await TwitterUser.truncate();
