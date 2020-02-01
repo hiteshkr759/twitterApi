@@ -13,6 +13,7 @@ const path = require('path')
 */
 console.log('Provider Loading');
 const providers = [
+  '@adonisjs/framework/providers/ViewProvider',
   '@adonisjs/framework/providers/AppProvider',
   '@adonisjs/auth/providers/AuthProvider',
   '@adonisjs/bodyparser/providers/BodyParserProvider',
@@ -20,7 +21,8 @@ const providers = [
   '@adonisjs/lucid/providers/LucidProvider',
   'adonis-scheduler/providers/SchedulerProvider',
   '@adonisjs/session/providers/SessionProvider',
-   path.join(__dirname,'../app', 'Provider', 'TwitterServiceProvider')
+   path.join(__dirname,'../app', 'Provider', 'TwitterServiceProvider'),
+   path.join(__dirname,'../app', 'Provider', 'LodashServiceProvider'),
 ]
 
 /*

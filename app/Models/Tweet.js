@@ -17,10 +17,6 @@ class Tweet extends Model {
         return moment().seconds(0).milliseconds(0).utc().add(5,"days").format("YYYY-MM-DD HH:mm:ss");
     }
 
-
-
-
-
     static async postTweetsToTwitter(){
         var slotStartTime = Tweet.slotStartTime();
         var slotEndTime = Tweet.slotEndTime();
@@ -32,18 +28,26 @@ class Tweet extends Model {
             .orderBy('postdatetime','asc');
         if(tweets.length > 0){
             const postedTweets = [];
-            tweets.map(tweet =>{
-                const {message : status , twitter_accessToken,twitter_accessSecret } = tweet;
-                // const postedTweet =  await TwitterApi.statuses("update", {
-                //     status
-                // },twitter_accessToken,twitter_accessSecret);
-                // postedTweets.push(postedTweet);
-                let postedTweet = await TwitterApi.statuses("update", {
-                        status
-                    },twitter_accessToken,twitter_accessSecret);
-                    console.log(postedTweet)
-
-            });
+            //console.log(tweets);
+           // const tweet = tweets[0];
+           Promise.all(tweets.map(async tweet =>{
+                console.log(tweet);
+                const {message : status , twitter_accessToken,twitter_accessSecret,multimedia,multiMediaUrl : media } = tweet;
+                if(multimedia == 'true'){
+                    const apiParams = {
+                        status,
+                        media
+                    }
+                    try{
+                        const response = await TwitterApi.uploadMediaV2(apiParams,twitter_accessToken,twitter_accessSecret);
+                        console.log(response);
+                    }catch(e){
+                        console.log('Error',e);
+                    }
+                }else{
+                    console.log('Normal Message');
+                }
+           }));
             console.log('Posted Tweets',postedTweets);
         }
         return tweets;
