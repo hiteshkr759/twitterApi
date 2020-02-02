@@ -1,0 +1,62 @@
+{
+  "_args": [
+    [
+      "node-twitter-api@1.8.0",
+      "C:\\Users\\HKUMAR1\\Desktop\\Twitter\\twitterApi"
+    ]
+  ],
+  "_from": "node-twitter-api@1.8.0",
+  "_id": "node-twitter-api@1.8.0",
+  "_inBundle": false,
+  "_integrity": "sha1-VL2ffLOzVUs/W0TUDAggKN5zVhA=",
+  "_location": "/node-twitter-api",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "node-twitter-api@1.8.0",
+    "name": "node-twitter-api",
+    "escapedName": "node-twitter-api",
+    "rawSpec": "1.8.0",
+    "saveSpec": null,
+    "fetchSpec": "1.8.0"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/node-twitter-api/-/node-twitter-api-1.8.0.tgz",
+  "_spec": "1.8.0",
+  "_where": "C:\\Users\\HKUMAR1\\Desktop\\Twitter\\twitterApi",
+  "author": {
+    "name": "René Raab"
+  },
+  "bugs": {
+    "url": "https://github.com/reneraab/node-twitter-api/issues"
+  },
+  "dependencies": {
+    "oauth": ">=0.8.4",
+    "request": "*"
+  },
+  "description": "Simple module for using Twitter's API in node.js",
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "homepage": "https://github.com/reneraab/node-twitter-api",
+  "keywords": [
+    "twitter",
+    "oauth",
+    "rest",
+    "streaming"
+  ],
+  "licenses": {
+    "type": "MIT",
+    "url": "https://raw.github.com/reneraab/node-twitter-api/master/LICENSE"
+  },
+  "main": "./twitter",
+  "name": "node-twitter-api",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reneraab/node-twitter-api.git"
+  },
+  "version": "1.8.0"
+}

@@ -1,6 +1,6 @@
 'use strict'
 //const Config = use('Config')
-let twitterAPI = require('node-twitter-api');
+let twitterAPI = require('../../node-twitter-api');
 
 class TwitterService {
     
