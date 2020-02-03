@@ -67,10 +67,14 @@ class TwitterLoginController {
                     user_id : logedInUser.id
                 }
                 try{
+          
                     const twitterApiuser = await TwitterUser.findOrCreate(twitterCheckUser,twitterUser);
-                    let token = await auth.generate(logedInUser)
-                    Object.assign(logedInUser, token);
-                    return response.status(200).json(logedInUser);
+                    let token = await auth.generate(logedInUser);
+                    const logedInUserDetail = {
+                        ...token,
+                        currentLogedInTwitterUserId:  logedIn_twitter_userId
+                    }
+                    return response.status(200).json(logedInUserDetail);
                 }catch(e){
                     return response.status(500).json({error : 'Error in Twitter Account Creation'});
                 }

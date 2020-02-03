@@ -13,16 +13,18 @@ class TwitterOwnerChecking {
    * @param {Function} next
    */
 
-  isValidOwner(twitterUserId){
-    return true;
+  isValidOwner(twitterUserId,logeInUser){
+    const allLinkedTwitterID  = logeInUser.linkedTwitterAccounts.split(',');
+    return allLinkedTwitterID.includes(twitterUserId);
+    //console.log('Check for User',twitterUserId,logeInUser.linkedTwitterAccounts);
+    //return true;
   }
 
-  async handle ({ request,response }, next) {
-    // call next to advance the request
-    console.log('MiddleWare is working');
-    const twitterUserId = '752038095504052224';
-    if(this.isValidOwner(twitterUserId)){
-      const twitterUser =  await TwitterUser.findBy('twitter_id',twitterUserId);
+  async handle ({ request,response,auth }, next) {
+    const currentLogedInTwitterUserId = request.header('currentLogedInTwitterUserId','');
+    const logeInUser = await auth.getUser();
+    if(this.isValidOwner(currentLogedInTwitterUserId,logeInUser)){
+      const twitterUser =  await TwitterUser.findBy('twitter_id',currentLogedInTwitterUserId);
       if(!twitterUser){
         return response.status(400).json({
           message : 'You need to authorise this account'

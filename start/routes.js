@@ -33,7 +33,7 @@ Route.group(() => {
   Route.get('twitter/follow','TwitterFriendController.follow').middleware(['isOwner'])
   Route.get('twitter/unfollow','TwitterFriendController.unfollow').middleware(['isOwner'])
   Route.get('twitter/verifyCredentials','TwitterLoginController.verifyCredentials').middleware(['isOwner'])
-  Route.post('twitter/users/:type','TwitterLoginController.users').middleware(['isOwner'])
+  Route.post('twitter/users/:type','TwitterLoginController.users').middleware(['auth','isOwner'])
 
 
   Route.post('schedule/tweet','ScheduleTweetController.store')
