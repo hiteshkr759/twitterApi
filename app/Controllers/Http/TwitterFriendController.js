@@ -144,7 +144,7 @@ class TwitterFriendController {
                     const params = {
                         user_id : userId,
                     }
-                    const friendShipResponse = TwitterApi.friendships('create',params,twitter_accessToken,twitter_accessSecret);
+                    const friendShipResponse = await TwitterApi.friendships('create',params,twitter_accessToken,twitter_accessSecret);
                     if(friendShipResponse.parsedData){
                         const firendship = friendShipResponse.parsedData;
                         response.status(200).json(firendship);
@@ -181,7 +181,7 @@ class TwitterFriendController {
                     const params = {
                         user_id : userId,
                     }
-                    const friendShipResponse = TwitterApi.friendships('destroy',params,twitter_accessToken,twitter_accessSecret);
+                    const friendShipResponse = await TwitterApi.friendships('destroy',params,twitter_accessToken,twitter_accessSecret);
                     if(friendShipResponse.parsedData){
                         const firendship = friendShipResponse.parsedData;
                         response.status(200).json(firendship);
