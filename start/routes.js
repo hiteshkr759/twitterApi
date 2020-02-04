@@ -31,7 +31,9 @@ Route.group(() => {
   Route.get('twitter/potentialFollower','TwitterFriendController.potentialFollower').middleware(['isOwner'])
   Route.get('twitter/potentialUnfollower','TwitterFriendController.potentialUnfollower').middleware(['isOwner'])
   Route.get('twitter/follow','TwitterFriendController.follow').middleware(['isOwner'])
+  Route.get('twitter/followNow','TwitterFriendController.followNow').middleware(['isOwner'])
   Route.get('twitter/unfollow','TwitterFriendController.unfollow').middleware(['isOwner'])
+  Route.get('twitter/unfollowNow','TwitterFriendController.unfollowNow').middleware(['isOwner'])
   Route.get('twitter/verifyCredentials','TwitterLoginController.verifyCredentials').middleware(['isOwner'])
   Route.post('twitter/users/:type','TwitterLoginController.users').middleware(['auth','isOwner'])
 

@@ -135,6 +135,81 @@ class TwitterFriendController {
     }
 
 
+    async followNow({request,response}){
+        try{
+            const {twitter_accessToken,twitter_accessSecret,wiseListUserIds,whiteListUserIds,twitter_id} = request.twitterUser;
+            const {userId} = request.only(['userId']);
+            if(userId){
+                try{
+                    const params = {
+                        user_id : userId,
+                    }
+                    const friendShipResponse = TwitterApi.friendships('create',params,twitter_accessToken,twitter_accessSecret);
+                    if(friendShipResponse.parsedData){
+                        const firendship = friendShipResponse.parsedData;
+                        response.status(200).json(firendship);
+                    }else{
+                        const error = friendShipResponse.error;
+                        return response.status(500).json({
+                            error
+                        });
+                    }
+                }catch(e){
+                    const error = e.error;
+                    return response.status(500).json({error});
+                }
+            }else{
+                return response.status(400).json({
+                    error : 'No user id found'
+                })
+            }
+        }catch(error){
+            console.log(error);
+            response.status(500).json({
+                error   
+            })
+        }
+    };
+
+
+    async unfollowNow({request,response}){
+        try{
+            const {twitter_accessToken,twitter_accessSecret,wiseListUserIds,whiteListUserIds,twitter_id} = request.twitterUser;
+            const {userId} = request.only(['userId']);
+            if(userId){
+                try{
+                    const params = {
+                        user_id : userId,
+                    }
+                    const friendShipResponse = TwitterApi.friendships('destroy',params,twitter_accessToken,twitter_accessSecret);
+                    if(friendShipResponse.parsedData){
+                        const firendship = friendShipResponse.parsedData;
+                        response.status(200).json(firendship);
+                    }else{
+                        const error = friendShipResponse.error;
+                        return response.status(500).json({
+                            error
+                        });
+                    }
+                }catch(e){
+                    const error = e.error;
+                    return response.status(500).json({error});
+                }
+            }else{
+                return response.status(400).json({
+                    error : 'No user id found'
+                })
+            }
+        }catch(error){
+            console.log(error);
+            response.status(500).json({
+                error   
+            })
+        }
+    };
+
+
+
     /* Follow These User */
     async follow({request,response}){
        	try{
@@ -190,7 +265,7 @@ class TwitterFriendController {
              error
             })
         }
- }
+    }
 
 }
 

@@ -890,7 +890,7 @@ Twitter.prototype.followers = function(type, params, accessToken, accessTokenSec
 // };
 
 // Friendships
-Twitter.prototype.friendships = function(type, params, accessToken, accessTokenSecret, callback) {
+Twitter.prototype.friendships = function(type, params, accessToken, accessTokenSecret) {
 	var url = type.toLowerCase(); // ids or list
 	var method = "GET";
 
@@ -901,36 +901,115 @@ Twitter.prototype.friendships = function(type, params, accessToken, accessTokenS
 		case "update":
 			method = "POST";
 	}
-
-
 	if (method == "GET") {
-		this.oa.get(baseUrl + "friendships/" + url + ".json?" + querystring.stringify(params), accessToken, accessTokenSecret, function(error, data, response) {
-			if (error) {
-				callback(error, data, response, baseUrl + "friendships/" + url + ".json?" + querystring.stringify(params));
-			} else {
-				try {
-					var parsedData = JSON.parse(data);
-				} catch (e) {
-					callback(e, data, response);
+		return new Promise((resolve,reject)=>{
+			this.oa.get(baseUrl + "friendships/" + url + ".json?" + querystring.stringify(params), accessToken, accessTokenSecret, (error, data, response) => {
+				if (error) {
+					const apiUrl = baseUrl + "friendships/" + url + ".json?" + querystring.stringify(params);
+					reject({
+						error,
+						data,
+						response,
+						apiUrl
+					});
+					//callback(error, data, response, baseUrl + "friendships/" + url + ".json?" + querystring.stringify(params));
+				} else {
+					try {
+						var parsedData = JSON.parse(data);
+					} catch (error) {
+						reject({
+							error,
+							data,
+							response
+						});
+						//callback(e, data, response);
+					}
+					resolve({
+						error : null,
+						parsedData,
+						response
+					});
+					//callback(null, parsedData, response);
 				}
-				callback(null, parsedData, response);
-			}
+			});
 		});
 	} else {
-		this.oa.post(baseUrl + "friendships/" + url + ".json", accessToken, accessTokenSecret, params, function(error, data, response) {
-			if (error) {
-				callback(error, data, response);
-			} else {
-				try {
-					var parsedData = JSON.parse(data);
-				} catch (e) {
-					callback(e, data, response);
+		return new Promise((resolve,reject)=>{
+			this.oa.post(baseUrl + "friendships/" + url + ".json", accessToken, accessTokenSecret, params, (error, data, response) => {
+				if (error) {
+					reject({
+						error,
+						data,
+						response,
+					});
+					//callback(error, data, response, baseUrl + "friendships/" + url + ".json?" + querystring.stringify(params));
+				} else {
+					try {
+						var parsedData = JSON.parse(data);
+					} catch (error) {
+						reject({
+							error,
+							data,
+							response
+						});
+						//callback(e, data, response);
+					}
+					resolve({
+						error : null,
+						parsedData,
+						response
+					});
+					//callback(null, parsedData, response);
 				}
-				callback(null, parsedData, response);
-			}
+			});
 		});
 	}
 };
+
+
+
+// Friendships
+// Twitter.prototype.friendships = function(type, params, accessToken, accessTokenSecret, callback) {
+// 	var url = type.toLowerCase(); // ids or list
+// 	var method = "GET";
+
+// 	// define endpoints that use POST
+// 	switch (type) {
+// 		case "create":
+// 		case "destroy":
+// 		case "update":
+// 			method = "POST";
+// 	}
+
+
+// 	if (method == "GET") {
+// 		this.oa.get(baseUrl + "friendships/" + url + ".json?" + querystring.stringify(params), accessToken, accessTokenSecret, function(error, data, response) {
+// 			if (error) {
+// 				callback(error, data, response, baseUrl + "friendships/" + url + ".json?" + querystring.stringify(params));
+// 			} else {
+// 				try {
+// 					var parsedData = JSON.parse(data);
+// 				} catch (e) {
+// 					callback(e, data, response);
+// 				}
+// 				callback(null, parsedData, response);
+// 			}
+// 		});
+// 	} else {
+// 		this.oa.post(baseUrl + "friendships/" + url + ".json", accessToken, accessTokenSecret, params, function(error, data, response) {
+// 			if (error) {
+// 				callback(error, data, response);
+// 			} else {
+// 				try {
+// 					var parsedData = JSON.parse(data);
+// 				} catch (e) {
+// 					callback(e, data, response);
+// 				}
+// 				callback(null, parsedData, response);
+// 			}
+// 		});
+// 	}
+// };
 
 Twitter.prototype.updateProfileImage = function(params, accessToken, accessTokenSecret, callback) {
 
