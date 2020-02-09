@@ -37,9 +37,9 @@ Route.group(() => {
   Route.get('twitter/verifyCredentials','TwitterLoginController.verifyCredentials').middleware(['isOwner'])
   Route.post('twitter/users/:type','TwitterLoginController.users').middleware(['auth','isOwner'])
 
-
-  Route.post('schedule/tweet','ScheduleTweetController.store')
-  Route.get('schedule/tweet/post','ScheduleTweetController.post')
+  Route.get('twitter/tweet/posts','ScheduleTweetController.load')
+  Route.post('twitter/tweet/schedule','ScheduleTweetController.store')
+  Route.post('twitter/tweet/post','ScheduleTweetController.post').middleware(['isOwner'])
 }).prefix('api/v1')
 
 // Route.any('*', ({view}) => {

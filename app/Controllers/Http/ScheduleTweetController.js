@@ -1,12 +1,32 @@
 'use strict'
 
+const TwitterApi = use('Adonis/Services/Twitter');
 const Tweet = use('App/Models/Tweet');
 const Request = use('Request'); 
 const Helpers = use('Helpers');
 
 
 class ScheduleTweetController {
-    
+
+    async _uploadMedia(media,token,secret){
+        console.log('Upload Media',media); 
+        try{
+            const params = {
+                media
+            }
+            const mediaUploadResponse = await TwitterApi.uploadMedia(params,token,secret);
+            if(mediaUploadResponse.parsedData){
+                console.log('Parsed Data',mediaUploadResponse.parsedData);
+            }else{
+                console.log('Error',mediaUploadResponse.error);
+            }
+        }catch(e){
+            console.log('Error',e);
+        }
+        return  'Media is uploading' + media;
+    }
+
+
     async store({request,response}){
         const data  = request.only(['postdatetime','twitterUserId','message','multimedia','image']);
         if(data.message && data.postdatetime){
@@ -42,9 +62,63 @@ class ScheduleTweetController {
         
     }
 
-
     async post({request,response}){
-        console.log('I am running');
+        const requestData  = request.only(['status','media']);
+        try{
+            const {twitter_accessToken,twitter_accessSecret} = request.twitterUser;
+            if(requestData.status){ 
+                const {status,media} = requestData;
+                const params = {
+                    status
+                }
+                const mediaFile =  request.file('mediaFile',{
+                    types: ['image'],
+                    size: '2mb'
+                });
+                if(media && mediaFile){
+                    try{
+                        const uplodaParams = {
+                            media : mediaFile.tmpPath
+                        }
+                        const uploadResponse =  await TwitterApi.uploadMedia(uplodaParams,twitter_accessToken,twitter_accessSecret);
+                        if(uploadResponse.parsedData){
+                            console.log('Medai',uploadResponse.parsedData)
+                            params.media_ids = uploadResponse.parsedData.media_id_string;
+                        }else{
+                            return response.status(400).json({
+                                error : 'Getting Issue In uploading Media to Twitter'
+                            })   
+                        }
+                    }catch(e){
+                        return response.status(400).json({
+                            error : 'Getting Issue In uploading Media to Twitter'
+                        })
+                    }
+                }
+                console.log('Twitter STATUS params',params);
+                try{
+                    const statusResponse = await TwitterApi.statuses('update',params,twitter_accessToken,twitter_accessSecret);
+                    if(statusResponse.parsedData){
+                        const status = statusResponse.parsedData;
+                        return response.status(200).json({
+                            status 
+                        });
+                    }else{
+                        return response.status(400).json({
+                            error : statusResponse.error
+                        });
+                    }
+                }catch(e){
+                    return response.status(500).json(e.error);
+                }
+            }else{
+                return response.status(400).json({
+                    error : 'Bad Data Formate'
+                })
+            }
+        }catch(error){
+            return response.status(500).json({error});
+        }
         //const tweets = await Database.table('tweets').select('*');
         // var slotStartTime = Tweet.slotStartTime();
         // var slotEndTime = Tweet.slotEndTime();
@@ -58,8 +132,9 @@ class ScheduleTweetController {
             
         // }
         // return tweets;
-        const tweets = await Tweet.postTweetsToTwitter();
-        return {tweets};
+        //const tweets = await Tweet.postTweetsToTwitter();
+
+       // return {tweets};
         //date.setSeconds(0,0);
         //endDate.setSeconds(0,0);
        // endDate.add(2,'minutes');

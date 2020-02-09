@@ -390,7 +390,7 @@ Twitter.prototype.getStream = function(type, params, accessToken, accessTokenSec
 
 
 // Tweets
-Twitter.prototype.statuses = function(type, params, accessToken, accessTokenSecret, callback) {
+Twitter.prototype.statuses = function(type, params, accessToken, accessTokenSecret) {
 	var url = type.toLowerCase();
 
 	var method = "GET";
@@ -440,30 +440,67 @@ Twitter.prototype.statuses = function(type, params, accessToken, accessTokenSecr
 	}
 
 	if (method == "GET") {
-		this.oa.get(baseUrl + "statuses/" + url + ".json?" + querystring.stringify(params), accessToken, accessTokenSecret, function(error, data, response) {
-			if (error) {
-				callback(error, data, response, baseUrl + "statuses/" + url + ".json?" + querystring.stringify(params));
-			} else {
-				try {
-					var parsedData = JSON.parse(data);
-				} catch (e) {
-					callback(e, data, response);
+		return new Promise((resolve,reject)=>{
+			this.oa.get(baseUrl + "statuses/" + url + ".json?" + querystring.stringify(params), accessToken, accessTokenSecret, (error, data, response) =>{
+				if (error) {
+					//callback(error, data, response, baseUrl + "statuses/" + url + ".json?" + querystring.stringify(params));
+					const apiUrl = baseUrl + "statuses/" + url + ".json?" + querystring.stringify(params);
+					reject({
+						error,
+						data,
+						apiUrl,
+						response
+					});
+				} else {
+					try {
+						var parsedData = JSON.parse(data);
+						
+					} catch (error) {
+						//callback(e, data, response);
+						reject({
+							error,
+							data,
+							response
+						});
+					}
+					//callback(null, parsedData, response);
+					resolve({
+						error : null,
+						parsedData,
+						response
+					});
 				}
-				callback(null, parsedData, response);
-			}
+			});
 		});
 	} else {
-		this.oa.post(baseUrl + "statuses/" + url + ".json", accessToken, accessTokenSecret, params, function(error, data, response) {
-			if (error) {
-				callback(error, data, response);
-			} else {
-				try {
-					var parsedData = JSON.parse(data);
-				} catch (error) {
-					callback(error, data, response);
+		return new Promise((resolve,reject)=>{
+			this.oa.post(baseUrl + "statuses/" + url + ".json", accessToken, accessTokenSecret, params, (error, data, response) =>{
+				if (error) {
+					//callback(error, data, response);
+					reject({
+						error,
+						data,
+						response
+					});
+				} else {
+					try {
+						var parsedData = JSON.parse(data);
+					} catch (error) {
+						//callback(e, data, response);
+						reject({
+							error,
+							data,
+							response
+						});
+					}
+					//callback(null, parsedData, response);
+					resolve({
+						error : null,
+						parsedData,
+						response
+					});
 				}
-				callback(null, parsedData, response);
-			}
+			});
 		});
 	}
 };
@@ -532,38 +569,88 @@ Twitter.prototype.uploadMediaV2 = function(params, accessToken, accessTokenSecre
 	return requestPromise(options);
 };
 
-Twitter.prototype.uploadMedia = function(params, accessToken, accessTokenSecret, callback) {
-	var r = request.post({
-		url: uploadBaseUrl + "media/upload.json",
-		oauth: {
-			consumer_key: this.consumerKey,
-			consumer_secret: this.consumerSecret,
-			token: accessToken,
-			token_secret: accessTokenSecret
-		}
-	}, function(error, response, body) {
-		if (error) {
-			//callback(error, body, response, uploadBaseUrl + "media/upload.json?" + querystring.stringify(params));
-		} else {
-			try {
-				var parsedBody = JSON.parse(body);
-			} catch (e) {
-				callback(e, body, response);
+
+Twitter.prototype.uploadMedia = function(params, accessToken, accessTokenSecret) {
+	return new Promise((resolve,reject)=>{
+		var r = request.post({
+			url: uploadBaseUrl + "media/upload.json",
+			oauth: {
+				consumer_key: this.consumerKey,
+				consumer_secret: this.consumerSecret,
+				token: accessToken,
+				token_secret: accessTokenSecret
 			}
-			callback(null, parsedBody, response);
+		},(error, response, body) =>{
+			if (error) {
+				const apiUrl = uploadBaseUrl + "media/upload.json?" + querystring.stringify(params);
+				reject({
+					error,
+					body,
+					apiUrl,
+					response
+				});
+			} else {
+				try {
+					var parsedData = JSON.parse(body);
+				} catch (error) {
+					reject({
+						error,
+						body,
+						response
+					});
+				}
+				resolve({
+					error : null,
+					parsedData,
+					response
+				});
+			}
+		});
+	
+		var parameter = (params.isBase64) ? "media_data" : "media";
+	
+		// multipart/form-data
+		var form = r.form();
+		if (fs.existsSync(params.media)) {
+			form.append(parameter, fs.createReadStream(params.media));
+		} else {
+			form.append(parameter, params.media);
 		}
 	});
-
-	var parameter = (params.isBase64) ? "media_data" : "media";
-
-	// multipart/form-data
-	var form = r.form();
-	if (fs.existsSync(params.media)) {
-		form.append(parameter, fs.createReadStream(params.media));
-	} else {
-		form.append(parameter, params.media);
-	}
 };
+
+// Twitter.prototype.uploadMedia = function(params, accessToken, accessTokenSecret, callback) {
+// 	var r = request.post({
+// 		url: uploadBaseUrl + "media/upload.json",
+// 		oauth: {
+// 			consumer_key: this.consumerKey,
+// 			consumer_secret: this.consumerSecret,
+// 			token: accessToken,
+// 			token_secret: accessTokenSecret
+// 		}
+// 	}, function(error, response, body) {
+// 		if (error) {
+// 			//callback(error, body, response, uploadBaseUrl + "media/upload.json?" + querystring.stringify(params));
+// 		} else {
+// 			try {
+// 				var parsedBody = JSON.parse(body);
+// 			} catch (e) {
+// 				callback(e, body, response);
+// 			}
+// 			callback(null, parsedBody, response);
+// 		}
+// 	});
+
+// 	var parameter = (params.isBase64) ? "media_data" : "media";
+
+// 	// multipart/form-data
+// 	var form = r.form();
+// 	if (fs.existsSync(params.media)) {
+// 		form.append(parameter, fs.createReadStream(params.media));
+// 	} else {
+// 		form.append(parameter, params.media);
+// 	}
+// };
 
 /**
  * upload video to twitter
