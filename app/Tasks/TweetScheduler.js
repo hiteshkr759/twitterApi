@@ -5,7 +5,7 @@ const Task = use('Task')
 class TweetScheduler extends Task {
   static get schedule () {
     //return '0 */1 * * * *'
-    return '*/1 * * * *';
+    return '*/5 * * * * ';
   }
 
   async handle () {

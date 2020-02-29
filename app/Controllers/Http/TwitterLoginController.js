@@ -27,6 +27,7 @@ class TwitterLoginController {
                 }); 
             }
         }catch(e){
+            console.log('error',e);
             response.json({
                 error : '3rd Party API is not Working'
             });
