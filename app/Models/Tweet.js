@@ -53,6 +53,16 @@ class Tweet extends Model {
         return tweets;
     }
 
+    static async loadTweets(){
+        try{
+            const tweets = await Database.select('*')
+            .from('tweets');
+            return tweets;
+        }catch(e){
+            return [];
+        }
+    }
+
 }
 
 module.exports = Tweet

@@ -26,12 +26,30 @@ class ScheduleTweetController {
         return  'Media is uploading' + media;
     }
 
+    async load({request,response}){
+        try{
+            const tweets = await Tweet.loadTweets();
+            return tweets;
+        }catch(e){
+            return {
+                'Status' : 'Loading Tweets'
+            }
+        }
+        
+    }   
+
 
     async store({request,response}){
-        const data  = request.only(['postdatetime','twitterUserId','message','multimedia','image']);
-        if(data.message && data.postdatetime){
+     
+        const data  = request.only(['postdatetime','twitterUserId','status','multimedia','image']);
+        const {twitter_id} = request.twitterUser;
+        console.log('Storing the post',data);
+        if(data.status && data.postdatetime){
             // console.log('Post time ',data.postdatetime);
+            data.postdatetime = new Date(data.postdatetime);
+            data.twitter_id = twitter_id;
             if(data.multimedia){
+                // Handle multimedia Storage --
                 const media = request.file('image',{
                     types: ['image'],
                     subtype : ['jpeg','gif'],
